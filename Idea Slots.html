@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Idea Slots</title>
+<style>
+:root{--bg:#f6f4ef;--card:#fff;--ink:#1d1b26;--mut:#6b6878;--acc:#6d4aff;--line:#ddd9e6;--lock:#ffb020;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15131c;--card:#1f1c2a;--ink:#f1eefb;--mut:#9d98b2;--acc:#8d71ff;--line:#34304a;--lock:#ffb020;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#15131c;--card:#1f1c2a;--ink:#f1eefb;--mut:#9d98b2;--acc:#8d71ff;--line:#34304a;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;display:flex;justify-content:center}
+main{width:100%;max-width:560px;padding:20px 16px 40px}
+h1{margin:0 0 4px;font-size:26px}p.s{margin:0 0 18px;color:var(--mut)}
+.reel{display:flex;align-items:center;gap:10px;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.reel.locked{border-color:var(--lock)}
+.reel small{width:76px;flex:none;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em}
+.reel b{flex:1;font-size:17px;min-height:24px}
+.reel.spin b{opacity:.5}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 12px}
+.lk{padding:4px 8px;font-size:15px}
+.reel.locked .lk{background:var(--lock);border-color:var(--lock)}
+.go{width:100%;background:var(--acc);color:#fff;border:0;font-size:18px;font-weight:700;padding:14px;margin:8px 0 14px}
+.go:active{transform:scale(.98)}
+.pitch{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;line-height:1.5}
+.row{display:flex;gap:8px;margin-top:10px}.row button{flex:1}
+h2{font-size:16px;margin:22px 0 8px}
+.fav{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:6px;font-size:14px;display:flex;gap:8px;justify-content:space-between}
+.fav button{padding:2px 8px;height:fit-content}
+[hidden]{display:none!important}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs button{flex:1}
+.on{background:var(--acc)!important;color:#fff!important;border-color:var(--acc)!important}
+.chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin:12px 0}
+.chip{padding:0;overflow:hidden;display:flex;flex-direction:column;border-radius:12px;text-align:center}
+.chip .pic{display:flex;align-items:center;justify-content:center;height:66px;font-size:34px}
+.chip .lb{padding:6px 4px;font-size:12.5px;line-height:1.2;flex:1;display:flex;align-items:center;justify-content:center}
+.chip.on{outline:3px solid var(--acc);outline-offset:-1px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin-bottom:8px}.bar i{display:block;height:100%;background:var(--acc);border-radius:3px}
+.nav{display:flex;gap:8px;margin-top:12px}.nav button{flex:1}
+.prim{background:var(--acc);color:#fff;border-color:var(--acc)}
+button:disabled{opacity:.4;cursor:default}
+.out{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;font:13px/1.5 ui-monospace,Menlo,monospace;overflow-x:auto;margin:10px 0}
+textarea{width:100%;font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0}
+.pan{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;display:grid;gap:8px}.pan label{display:flex;gap:8px;align-items:center}
+.chips.plain{display:flex;flex-wrap:wrap}.plain .chip{flex-direction:row;border-radius:20px}.plain .lb{padding:7px 12px;font-size:14px}
+.fav span{white-space:pre-wrap;max-height:110px;overflow:auto;flex:1}
+</style></head><body><main><div id="gate" class="pan" style="margin-top:40px"><h1>🔒 Game Idea Lab</h1><p class="s">Enter your access code to continue.</p><input id="gi" autocomplete="off" placeholder="Access code" style="font:inherit;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)"><button class="go" id="gb" style="margin:0">Unlock</button><small id="ge" style="color:#e5484d"></small></div><div id="app" hidden>
+<h1>💡 Game Idea Lab</h1><div class="tabs"><button id="tw" class="on">🧭 Guided builder</button><button id="ts">🎰 Bonus: Slots</button><button id="tg" style="flex:none" title="Settings">⚙️</button></div><div id="set" class="pan" hidden><b>Settings</b><label><input type="checkbox" id="sp"> Show preview tiles (icons)</label><label><input type="checkbox" id="sc"> Colored tile backgrounds</label></div><div id="wiz"></div><div id="slots" hidden>
+<p class="s">Spin for a game idea. Lock what you like, re-spin the rest.</p>
+<div id="reels"></div>
+<button class="go" id="go">SPIN</button>
+<div class="pitch" id="pitch">Press spin to get started.</div>
+<div class="row"><button id="save">⭐ Save idea</button><button id="copy">📋 Copy</button></div>
+</div><h2>Saved ideas</h2><div id="favs"></div>
+<script>
+const D={
+Genre:["roguelike","platformer","puzzle game","tower defense","farming sim","card battler","visual novel","racing game","survival crafter","rhythm game","deckbuilder","stealth game","city builder","metroidvania"],
+Theme:["a haunted lighthouse","space janitors","a medieval bakery","sentient weather","time-traveling mail carriers","a dying dream world","tiny kingdoms in a terrarium","a robot circus","deep-sea archaeology","a wizard school for villains","a cursed road trip","ants building an empire"],
+Mechanic:["you can only move when music plays","gravity flips every 10 seconds","you control two characters at once","every death changes the level","time rewinds on a button","you build the level as you play","enemies copy your past moves","resources are shared with a rival","you shrink with every jump","the map is a single screen that folds"],
+Twist:["the narrator lies to you","the villain is your future self","there are no enemies, only deadlines","the game slowly deletes itself","your save file is a character","players vote on rules mid-run","the UI is part of the world","winning makes the game harder"],
+Limit:["one-button controls","made in 48 hours","only 3 colors","no text allowed","playable in 5 minutes","pixel art, 16×16 sprites","one screen only","fully procedural audio"]};
+const K=Object.keys(D);let cur={},locked={};
+const $=id=>document.getElementById(id);
+$("reels").innerHTML=K.map(k=>`<div class="reel" id="r${k}"><small>${k}</small><b>–</b><button class="lk" data-k="${k}" title="Lock">🔓</button></div>`).join("");
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function text(){const c=cur;return `A ${c.Genre} about ${c.Theme}, where ${c.Mechanic}. Twist: ${c.Twist}. Limit: ${c.Limit}.`}
+function spin(){
+  K.forEach((k,i)=>{if(locked[k])return;const r=$("r"+k);r.classList.add("spin");
+    let n=0;const t=setInterval(()=>{r.querySelector("b").textContent=pick(D[k]);
+      if(++n>6+i*4){clearInterval(t);cur[k]=pick(D[k]);r.querySelector("b").textContent=cur[k];r.classList.remove("spin");if(i===K.length-1||K.slice(i+1).every(x=>locked[x]))show()}},70)});
+  if(K.every(k=>locked[k]))show();
+}
+function show(){if(K.every(k=>cur[k]))$("pitch").textContent=text()}
+$("go").onclick=spin;
+$("reels").onclick=e=>{const b=e.target.closest(".lk");if(!b)return;const k=b.dataset.k;locked[k]=!locked[k];
+  $("r"+k).classList.toggle("locked",!!locked[k]);b.textContent=locked[k]?"🔒":"🔓"};
+let favs=[];try{favs=JSON.parse(localStorage.getItem("favs")||"[]")}catch(e){}
+function draw(){$("favs").innerHTML=favs.length?favs.map((f,i)=>`<div class="fav"><span></span><button data-i="${i}">✕</button></div>`).join(""):'<p class="s">Nothing yet.</p>';
+  document.querySelectorAll("#favs .fav span").forEach((s,i)=>s.textContent=favs[i])}
+function store(){try{localStorage.setItem("favs",JSON.stringify(favs))}catch(e){}}
+$("save").onclick=()=>{if(!K.every(k=>cur[k]))return;const t=text();if(!favs.includes(t)){favs.unshift(t);store();draw()}};
+$("favs").onclick=e=>{const b=e.target.closest("button");if(!b)return;favs.splice(+b.dataset.i,1);store();draw()};
+$("copy").onclick=async()=>{if(!K.every(k=>cur[k]))return;try{await navigator.clipboard.writeText(text());$("copy").textContent="✅ Copied";setTimeout(()=>$("copy").textContent="📋 Copy",1200)}catch(e){}};
+draw();
+const P=(k,t,q,o,m,f)=>({k,t,q,o:o.split("|"),m,if:f}),Y=()=>S.story==="Yes";
+const W=[
+P("genre","Genre","What type of game is it?","Action|Platformer|Puzzle|RPG|Roguelike|Metroidvania|Shooter|Strategy|Tower defense|Card or deckbuilder|Simulation|Farming sim|City builder|Survival|Horror|Racing|Fighting|Sports|Rhythm|Stealth|Adventure|Visual novel|Idle or clicker|Sandbox|Party game|Trivia|Text adventure|Battle royale"),
+P("setting","Theme","What’s the setting or vibe?","Medieval|Modern|Futuristic|Magical|Realistic|Post-apocalyptic|Cyberpunk|Steampunk|Ancient world|Wild West|Space|Underwater|Fantasy|Sci-fi|Haunted|Cartoon and whimsical|Dreamlike|Military|Pirate|Mythological"),
+P("art","Art style","How should it look?","Pixel art|2D hand-drawn|Low-poly 3D|Realistic 3D|Cel-shaded|Minimalist|Retro 8-bit|Voxel|Text-only|Isometric|Watercolor|Neon synthwave"),
+P("view","Perspective","What’s the camera view?","Top-down|Side-scrolling|First-person|Third-person|Isometric|Fixed screen|Point-and-click|Menu based"),
+P("players","Players","Who plays it?","Single-player|Local co-op|Online co-op|Online PvP|Local versus|Leaderboards only"),
+P("plat","Platform","Where will it run?","Web browser|Mobile|PC|Console|VR|Cross-platform"),
+P("story","Story","Is it a story game?","Yes|No"),
+P("plot","Story: plot","What’s the story about?","Revenge|Survival|Mystery or investigation|Rescue mission|Chosen hero|Prison escape|Rebuilding a world|Uncovering a conspiracy|Love and friendship|Redemption|War and rebellion|Lost memories|Coming-of-age|Heist|Time travel|Monster hunting",0,Y),
+P("tone","Story: tone","Pick the tone (any number).","Dark|Funny|Emotional|Epic|Cozy|Creepy|Mysterious|Satirical|Hopeful",1,Y),
+P("end","Story: ending","How does it end?","Single ending|Multiple endings|Choices matter|Open-ended|Twist ending",0,Y),
+P("cast","Story: hero","Who do you play?","Silent hero|Voiced protagonist|Ensemble party|Hero with a companion|Customizable hero",0,Y),
+P("f1","Gameplay features","Check everything you want.","Combat|Crafting|Building|Puzzles|Exploration|Stealth|Dialogue choices|Boss fights|Quests|Inventory|Physics|Procedural levels|Day/night cycle|Weather",1),
+P("f2","Progression features","Check everything you want.","XP and levels|Skill tree|Unlockables|Achievements|Upgrades and shops|Permadeath|Save system|Difficulty settings|Daily challenges|New Game+",1),
+P("f3","World and content","Check everything you want.","Open world|Random events|NPCs|Pets or companions|Mini-games|Collectibles|Secrets|Map|Factions|Dungeons",1),
+P("f4","Multiplayer and social","Check everything you want.","Leaderboards|Chat|Friends list|Trading|Guilds|Spectator mode|Shared worlds|Matchmaking",1),
+P("f5","Polish","Check everything you want.","Soundtrack|Sound effects|Particle effects|Tutorial|Pause menu|Settings menu|Controller support|Accessibility options|Screen shake|Animated menus",1),
+{k:"notes",t:"Final notes",q:"Anything else? Title, inspirations, special rules (optional).",x:1}];
+const E={};"Action=⚔️|Platformer=🍄|Puzzle=🧩|RPG=🛡️|Roguelike=🎲|Metroidvania=🗝️|Shooter=🔫|Strategy=♟️|Tower defense=🏰|Card or deckbuilder=🃏|Simulation=🛠️|Farming sim=🌾|City builder=🏙️|Survival=🏕️|Horror=👻|Racing=🏎️|Fighting=🥊|Sports=⚽|Rhythm=🎵|Stealth=🥷|Adventure=🧭|Visual novel=📖|Idle or clicker=👆|Sandbox=🏖️|Party game=🎉|Trivia=❓|Text adventure=⌨️|Battle royale=🪂|Medieval=🗡️|Modern=🏢|Futuristic=🚀|Magical=🪄|Realistic=📷|Post-apocalyptic=☢️|Cyberpunk=🌃|Steampunk=⚙️|Ancient world=🏛️|Wild West=🤠|Space=🪐|Underwater=🐠|Fantasy=🐉|Sci-fi=👽|Haunted=🏚️|Cartoon and whimsical=🎈|Dreamlike=🌙|Military=🪖|Pirate=🏴‍☠️|Mythological=⚡|Pixel art=👾|2D hand-drawn=✏️|Low-poly 3D=🔷|Realistic 3D=🎬|Cel-shaded=🖌️|Minimalist=⚪|Retro 8-bit=🕹️|Voxel=🧊|Text-only=🔤|Isometric=📐|Watercolor=🎨|Neon synthwave=🌆|Top-down=🗺️|Side-scrolling=➡️|First-person=👁️|Third-person=🧍|Fixed screen=🖼️|Point-and-click=🖱️|Menu based=📋|Single-player=🙂|Local co-op=🛋️|Online co-op=🤝|Online PvP=🌐|Local versus=🆚|Leaderboards only=🏆|Web browser=🌍|Mobile=📱|PC=🖥️|Console=🎮|VR=🥽|Cross-platform=🔄|Yes=✅|No=❌|Revenge=🔥|Mystery or investigation=🔍|Rescue mission=🚁|Chosen hero=⭐|Prison escape=⛓️|Rebuilding a world=🏗️|Uncovering a conspiracy=🕵️|Love and friendship=💞|Redemption=🕊️|War and rebellion=🚩|Lost memories=🧠|Coming-of-age=🎒|Heist=💰|Time travel=⏳|Monster hunting=👹|Dark=🌑|Funny=😂|Emotional=😢|Epic=🌄|Cozy=☕|Creepy=🕷️|Mysterious=🔮|Satirical=🎭|Hopeful=🌅|Single ending=🏁|Multiple endings=🔀|Choices matter=⚖️|Open-ended=♾️|Twist ending=🌀|Silent hero=🤐|Voiced protagonist=🎤|Ensemble party=👥|Hero with a companion=🐕|Customizable hero=🧑‍🎨|Combat=⚔️|Crafting=🔨|Building=🧱|Puzzles=🧩|Exploration=🧭|Dialogue choices=💬|Boss fights=🐲|Quests=📜|Inventory=🎒|Physics=🎱|Procedural levels=🎲|Day/night cycle=🌗|Weather=⛈️|XP and levels=📈|Skill tree=🌳|Unlockables=🔓|Achievements=🏅|Upgrades and shops=🛒|Permadeath=💀|Save system=💾|Difficulty settings=🎚️|Daily challenges=📅|New Game+=➕|Open world=🌎|Random events=🎰|NPCs=🧑‍🌾|Pets or companions=🐾|Mini-games=🎯|Collectibles=💎|Secrets=🕳️|Map=📍|Factions=🚩|Dungeons=🕯️|Leaderboards=🥇|Chat=💬|Friends list=👫|Trading=🔁|Guilds=🛡️|Spectator mode=📺|Shared worlds=🌐|Matchmaking=🧲|Soundtrack=🎼|Sound effects=🔊|Particle effects=✨|Tutorial=🎓|Pause menu=⏸️|Settings menu=⚙️|Controller support=🎮|Accessibility options=♿|Screen shake=📳|Animated menus=🎞️".split("|").forEach(p=>{const i=p.indexOf("=");E[p.slice(0,i)]=p.slice(i+1)});
+const grad=n=>{let h=0;for(const c of n)h=(h*31+c.charCodeAt(0))%360;return `linear-gradient(135deg,hsl(${h} 70% 55%),hsl(${(h+50)%360} 70% 38%))`};
+const X={genre:"Brawler=👊|Bullet hell=💥|Match-3=🍬|Escape room=🚪|Detective=🕵️|Dating sim=💘|Tycoon=💼|Management=📊|Auto-battler=🤖|Walking sim=🚶|Souls-like=☠️|Hack and slash=🪓|Space shooter=🛸|Physics sandbox=🧪|Word game=🔠|Educational=🎓|Social deduction=🗣️|Looter shooter=🧰|Narrative adventure=📚|Monster collector=🐾",
+setting:"Noir=🎩|Tropical island=🏝️|Arctic=❄️|Desert=🏜️|Jungle=🌴|Fairy tale=🧚|Victorian=🕰️|Dystopian=🏭|Zombie apocalypse=🧟|Feudal Japan=🏯|Viking=🛶|School=🏫|Dinosaur age=🦖|Candy land=🍭|Lovecraftian=🐙|Superhero=🦸|Retro 80s=📼|Alien planet=🌌",
+art:"Claymation=🧸|Paper cutout=✂️|Comic book=📰|Anime=🌸|Gothic=🦇|Low-res PS1=📀|Black and white=⬛|Stained glass=🪟|Chalk sketch=🖍️|Pastel=🧁",
+view:"Over-the-shoulder=🎥|2.5D=🔲|Free camera=📹|Split-screen=➗|Rotating camera=🔃|Pseudo-3D=🏁",
+players:"2-player=👯|Massively multiplayer=🏙️|Team vs team=🧑‍🤝‍🧑|Asynchronous turns=📨|Pass-and-play=🔁|AI companions=🦾",
+plat:"Steam Deck=🕹️|Handheld=📟|Tablet=📲|Arcade cabinet=👾|Smart TV=📺|Discord bot=🤖",
+plot:"Treasure hunt=🗺️|Escape from invasion=🏃|Underdog sports story=🏅|Fall of an empire=🏛️|Cosmic horror=🦑|Family secrets=🏠|Survive the night=🌙|Haunted legacy=🕯️|Political intrigue=👑|First contact=🛸|Becoming a legend=🌟",
+tone:"Whimsical=🎈|Gritty=🪨|Romantic=🌹|Tense=😬|Nostalgic=📼|Surreal=🫠|Peaceful=🕊️|Bittersweet=🥀|Adventurous=⛰️",
+end:"Good vs bad ending=☯️|Secret ending=🗝️|Cliffhanger=🪂|Sequel bait=🔗|Player-made ending=✍️",
+cast:"Anti-hero=🕶️|Animal hero=🦊|Robot hero=🤖|Villain protagonist=😈|Rotating heroes=🔄|Child hero=🧒",
+f1:"Driving=🚗|Flying=🪽|Swimming=🏊|Climbing=🧗|Cooking=🍳|Fishing=🎣|Hacking=💻|Magic spells=✨|Time manipulation=⏱️|Grappling hook=🪝|Wall-running=🏃|Parry and dodge=🤺",
+f2:"Loot drops=🎁|Rare items=💠|Equipment slots=🧤|Reputation system=🌟|Currency and economy=🪙|Rank system=🎖️|Seasonal events=🎄|Battle pass=🎫|Checkpoints=🚩",
+f3:"Day jobs=💼|Housing=🏡|Shops=🏪|Hidden bosses=👑|Side quests=📌|Lore books=📚|Wildlife=🦌|Fast travel=⚡|Procedural worlds=🪐|Destructible terrain=🧨|Mounts=🐴|Seasons=🍂",
+f4:"Voice chat=🎙️|Emotes=😄|Co-op missions=🤝|PvP arenas=🏟️|Tournaments=🏆|Replays=⏪|Player profiles=🪪|Custom lobbies=🚪|Share codes=🔗|Mod support=🧩",
+f5:"Dynamic music=🎶|Voice acting=🗣️|Cutscenes=🎬|Cloud saves=☁️|Photo mode=📸|Haptics=📳|Localization=🌐|Colorblind mode=🌈|Dark mode=🌙|Credits screen=🧾|Loading tips=💡"};
+for(const k in X){const s=W.find(w=>w.k===k);X[k].split("|").forEach(p=>{const i=p.indexOf("="),n=p.slice(0,i);s.o.push(n);E[n]=p.slice(i+1)})}
+let ST={pics:true,col:true};try{Object.assign(ST,JSON.parse(localStorage.getItem("st")||"{}"))}catch(e){}
+let wi=0,S={};
+const vis=()=>W.filter(s=>!s.if||s.if());
+function build(){const j=k=>[].concat(S[k]||[]).join(", "),L=["You are an expert game designer and developer. Help me design and build this game.","","GAME SPEC"],add=(l,k)=>j(k)&&L.push("- "+l+": "+j(k));
+add("Genre","genre");add("Setting/theme","setting");add("Art style","art");add("Perspective","view");add("Players","players");add("Platform","plat");
+if(Y()){L.push("","STORY");add("Story about","plot");add("Tone","tone");add("Ending","end");add("Protagonist","cast")}else L.push("- Story: none, gameplay focused");
+L.push("","FEATURES");[["Gameplay","f1"],["Progression","f2"],["World/content","f3"],["Multiplayer/social","f4"],["Polish","f5"]].forEach(([l,k])=>add(l,k));
+if(j("notes").trim())L.push("","EXTRA NOTES",S.notes.trim());
+L.push("","TASK","1. Suggest a title and one-paragraph pitch.","2. Describe the core gameplay loop.","3. Turn the features into a prioritized build plan (MVP first).","4. Then help me build the MVP step by step, asking before big decisions.");return L.join("\n")}
+function wr(){const v=vis(),el=$("wiz");
+if(wi>=v.length){el.innerHTML='<div class="bar"><i style="width:100%"></i></div><h2>Your final draft</h2><p class="s">Paste this into any AI to start building.</p><pre class="out"></pre><div class="nav"><button id="wb">← Back</button><button id="wc">📋 Copy</button></div><div class="nav"><button class="prim" id="ws">💾 Store idea</button><button id="wr">↺ Start over</button></div>';el.querySelector("pre").textContent=build();return}
+const s=v[wi],val=S[s.k]||(s.m?[]:"");
+let body=s.x?'<textarea id="wt" rows="4"></textarea>':'<div class="chips'+(ST.pics?"":" plain")+'">'+s.o.map((o,i)=>`<button class="chip${s.m?val.includes(o):val===o?" on":""}" data-i="${i}">${ST.pics?`<span class="pic" style="background:${ST.col?grad(o):"var(--line)"}">${E[o]||"🎮"}</span>`:""}<span class="lb">${o}</span></button>`).join("")+"</div>";
+body=body.replace(/class="chip(true|false)"/g,(m,b)=>b==="true"?'class="chip on"':'class="chip"');
+el.innerHTML=`<div class="bar"><i style="width:${wi/v.length*100}%"></i></div><p class="s">Step ${wi+1} of ${v.length}</p><h2>${s.t}</h2><p>${s.q}</p>${body}<div class="nav"><button id="wb"${wi?"":" disabled"}>← Back</button><button class="prim" id="wn"${s.m||s.x||val?"":" disabled"}>${wi===v.length-1?"Finish ✨":"Next →"}</button></div>`;
+if(s.x)$("wt").value=val}
+$("wiz").onclick=async e=>{const b=e.target.closest("button");if(!b)return;const s=vis()[wi],t=$("wt");
+if(b.classList.contains("chip")){const o=s.o[+b.dataset.i];if(s.m){const a=S[s.k]=S[s.k]||[],j=a.indexOf(o);j<0?a.push(o):a.splice(j,1)}else S[s.k]=o;return wr()}
+if(t&&s&&s.x)S[s.k]=t.value;
+if(b.id==="wn"){wi++;wr()}else if(b.id==="wb"){wi--;wr()}else if(b.id==="wr"){S={};wi=0;wr()}
+else if(b.id==="wc"){try{await navigator.clipboard.writeText(build());b.textContent="✅ Copied"}catch(x){}}
+else if(b.id==="ws"){const p=build();if(!favs.includes(p)){favs.unshift(p);store();draw()}b.textContent="✅ Stored!"}};
+function tab(x){$("wiz").hidden=x!=="w";$("slots").hidden=x!=="s";$("tw").classList.toggle("on",x==="w");$("ts").classList.toggle("on",x==="s")}
+$("tg").onclick=()=>{$("set").hidden=!$("set").hidden};
+$("sp").checked=ST.pics;$("sc").checked=ST.col;$("sc").disabled=!ST.pics;
+$("set").onchange=()=>{ST.pics=$("sp").checked;ST.col=$("sc").checked;$("sc").disabled=!ST.pics;try{localStorage.setItem("st",JSON.stringify(ST))}catch(e){}wr()};
+$("tw").onclick=()=>tab("w");$("ts").onclick=()=>tab("s");wr();
+const CODE="HENRYISGOATED";
+function unlock(){$("gate").hidden=true;$("app").hidden=false}
+try{if(localStorage.getItem("ok")==="1")unlock()}catch(e){}
+function tryCode(){if($("gi").value.trim().toUpperCase()===CODE){try{localStorage.setItem("ok","1")}catch(e){}unlock()}else $("ge").textContent="Wrong code. Try again."}
+$("gb").onclick=tryCode;$("gi").onkeydown=e=>{if(e.key==="Enter")tryCode()};
+</script></div></main></body></html>
